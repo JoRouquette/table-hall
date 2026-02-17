@@ -1,0 +1,38 @@
+{
+  "name": "tablehall-api",
+  "projectType": "application",
+  "root": "apps/tablehall-api",
+  "targets": {
+    "restore": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/tablehall-api",
+        "command": "dotnet restore TableHall.sln"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["restore"],
+      "options": {
+        "cwd": "apps/tablehall-api",
+        "command": "dotnet build TableHall.sln -c Release --no-restore"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "apps/tablehall-api",
+        "command": "dotnet test TableHall.sln -c Release --no-build"
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/tablehall-api",
+        "command": "dotnet run --project src/TableHall.Api/TableHall.Api.csproj"
+      }
+    }
+  },
+  "tags": ["scope:api", "type:app"]
+}
