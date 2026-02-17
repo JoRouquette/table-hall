@@ -1,0 +1,50 @@
+name: Release (SemVer)
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write # commit + tag
+  actions: write
+
+concurrency:
+  group: release-master
+  cancel-in-progress: false
+
+jobs:
+  release:
+    # ne pas relancer une release sur le commit de release
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') && github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+
+    env:
+      NX_TUI: 'false'
+      NX_DAEMON: 'false'
+
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install
+        run: npm ci
+
+      - name: Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Nx Release
+        run: npx nx release --skip-publish --yes
+
+      - name: Push commit + tags
+        run: git push --follow-tags

@@ -72,5 +72,19 @@
       "style": "scss",
       "unitTestRunner": "jest"
     }
+  },
+  "release": {
+    "projects": ["tablehall"],
+    "projectsRelationship": "fixed",
+    "version": {
+      "conventionalCommits": true
+    },
+    "releaseTag": {
+      "pattern": "{version}",
+      "requireSemver": true
+    },
+    "git": {
+      "commitMessage": "chore(release): {version}"
+    }
   }
 }

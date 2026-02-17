@@ -1,0 +1,47 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    # évite de reboucler sur le commit de release
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+    runs-on: ubuntu-latest
+
+    env:
+      NX_TUI: 'false'
+      NX_DAEMON: 'false'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # tags + historique complet nécessaires au tooling
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.305'
+
+      - name: Install
+        run: npm ci
+
+      - name: Web build
+        run: npx nx build tablehall-web
+
+      - name: API build+tests (Release)
+        run: npx nx run tablehall-api:test
