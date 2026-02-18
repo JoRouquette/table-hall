@@ -1,7 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
 
 var app = builder.Build();
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -11,11 +14,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => TypedResults.Ok("TableHall API"));
-
 await app.RunAsync();
 
-// requis pour WebApplicationFactory<Program> dans les tests
 public partial class Program
 {
   protected Program() { }
