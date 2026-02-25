@@ -1,0 +1,10 @@
+
+npm run lint:csharp
+npx nx lint tablehall-web
+npx nx lint api-contracts
+npx nx lint web-data-access
+
+npm run lint:csharp
+npx nx lint tablehall-web
+npx nx lint api-contracts
+npx nx lint web-data-access

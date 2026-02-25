@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint:csharp": "dotnet tool run csharpier check apps/tablehall-api/"
   },
   "private": true,
   "dependencies": {

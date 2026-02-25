@@ -1,0 +1,96 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Restore .NET (Solution)",
+      "type": "shell",
+      "command": "dotnet restore apps/tablehall-api/TableHall.sln",
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build .NET (Solution)",
+      "type": "shell",
+      "command": "dotnet build apps/tablehall-api/TableHall.sln --no-restore",
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test .NET (Solution)",
+      "type": "shell",
+      "command": "dotnet test apps/tablehall-api/TableHall.sln --no-build --verbosity normal",
+      "group": "test",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Format .NET (Solution)",
+      "type": "shell",
+      "command": "dotnet format apps/tablehall-api/TableHall.sln",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint .NET (Solution)",
+      "type": "shell",
+      "command": "dotnet build apps/tablehall-api/TableHall.sln --no-restore -warnaserror",
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Run .NET API",
+      "type": "shell",
+      "command": "dotnet run --project apps/tablehall-api/TableHall.Api/TableHall.Api.csproj",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Clean .NET (Solution)",
+      "type": "shell",
+      "command": "dotnet clean apps/tablehall-api/TableHall.sln",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx Build All",
+      "type": "shell",
+      "command": "npx nx run-many --target=build --all",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx Test All",
+      "type": "shell",
+      "command": "npx nx run-many --target=test --all",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx Lint All",
+      "type": "shell",
+      "command": "npx nx run-many --target=lint --all",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx E2E All",
+      "type": "shell",
+      "command": "npx nx run-many --target=e2e --all",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Serve Web (dev)",
+      "type": "shell",
+      "command": "npx nx serve tablehall-web",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Serve Web (static)",
+      "type": "shell",
+      "command": "npx nx run tablehall-web:serve-static",
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}
