@@ -3,16 +3,34 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace TableHall.Dsl;
 
+/// <summary>
+/// Canonical form and fingerprint of ABI 1.0.0 section 6. This exists for one reason: give equal
+/// content the same fingerprint and different content a different one. It is never an exchange
+/// format.
+/// </summary>
 public static class CanonicalJson
 {
+  /// <summary>
+  /// Section 6 rule 6 asks for minimal escaping: only the quote, the backslash and control
+  /// characters. The default encoder also escapes HTML-sensitive and non-ASCII characters, which
+  /// would make the fingerprint of any accented string constant depend on the encoder rather than
+  /// on the content.
+  /// </summary>
+  private static readonly JsonWriterOptions CanonicalWriterOptions = new()
+  {
+    Indented = false,
+    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+  };
+
   public static string SerializeCanonical(Expr expr)
   {
     var buffer = new ArrayBufferWriter<byte>();
-    using var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = false });
+    using var writer = new Utf8JsonWriter(buffer, CanonicalWriterOptions);
     WriteCanonical(expr, writer);
     writer.Flush();
     return Encoding.UTF8.GetString(buffer.WrittenSpan);
@@ -50,7 +68,11 @@ public static class CanonicalJson
         writer.WriteNumberValue(i);
         break;
       case decimal d:
-        writer.WriteStringValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        writer.WriteStringValue(
+          DslConstValue.NormaliseDecimalLiteral(
+            d.ToString(System.Globalization.CultureInfo.InvariantCulture)
+          )
+        );
         break;
       case bool b:
         writer.WriteBooleanValue(b);
@@ -65,7 +87,9 @@ public static class CanonicalJson
   private static void WriteCanonicalExpr(Expr expr, Utf8JsonWriter writer)
   {
     writer.WriteStartObject();
-    var props = new SortedDictionary<string, object?>();
+    // Section 6 rule 2: ordinal ordering, never a culture-dependent comparer. The defect this
+    // guards against is latent on ASCII keys — which is exactly why it must be pinned here.
+    var props = new SortedDictionary<string, object?>(StringComparer.Ordinal);
     switch (expr)
     {
       case ConstExpr c:
