@@ -1,0 +1,13 @@
+<Project>
+  <!--
+    SourceLink (shipped by the .NET SDK) queries the repository through libgit2, which rejects the
+    `relativeWorktrees` extension that Git 2.54 sets on bare+worktree layouts. That makes every
+    local build fail with an error unrelated to the code.
+
+    CI clones normally and has no such extension, so SourceLink stays enabled there and release
+    artifacts keep their source information.
+  -->
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+  </PropertyGroup>
+</Project>
