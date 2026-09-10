@@ -1,0 +1,20 @@
+# Exclusion list for CSharpier.
+#
+# This file exists mainly so that `--ignore-path` has something to point at. Without an explicit
+# path, CSharpier's automatic discovery matches nothing inside a git worktree: `csharpier check`
+# then reports "Checked 0 files" and exits successfully, so the format gate silently passes
+# without having looked at anything. Measured on 2026-09-10: 0 files without the flag, 50 with it.
+#
+# Two conditions have to hold, and both fail silently:
+#   * --ignore-path must be given, and must point at a file that exists (a missing path crashes
+#     CSharpier with a System.CommandLine stack trace instead of a clear message);
+#   * the target path must NOT end with a trailing slash. `apps/tablehall-api/` checks 0 files,
+#     `apps/tablehall-api` checks 50. Keep the scripts in package.json free of that slash.
+#
+# bin/ and obj/ are already excluded by CSharpier's own defaults. They are listed anyway so the
+# exclusion survives a change in those defaults.
+
+**/bin/
+**/obj/
+**/node_modules/
+dist/

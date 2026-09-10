@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky",
-    "lint:csharp": "dotnet tool run csharpier check apps/tablehall-api/"
+    "lint:csharp": "dotnet tool run csharpier check apps/tablehall-api --ignore-path .csharpierignore",
+    "format:csharp": "dotnet tool run csharpier format apps/tablehall-api --ignore-path .csharpierignore"
   },
   "private": true,
   "dependencies": {
